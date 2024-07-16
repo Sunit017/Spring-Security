@@ -1,0 +1,26 @@
+
+Authentication --
+================
+Authentication means is knowing about the identity of user who is using the application .
+
+Authorization ---
+================
+it is next to authenication , giving authority to user use the specific components of application 
+
+Spring Security ----
+========================
+Security Fillter chain before that delegating fillter chain 
+
+
+Fillter = before request go to controller and after response come from controller fillter stands in between 
+authentication fillter -- if you added spring security it will come and job is to intercept authenication request and grab username and password and create 
+authenication object /once object is created , object will hand over to authentication manager 
+authenication manager -- it decide what to do with this credential , delicate task authenicate to user to someone else and i need authentication provider
+|> authenticate()
+authentication provider (DaoauthenticationProvider)-- check that given credential right or wrong , it need 2 things 1.passwordEncoder 2.userDetailsService 
+|>matches
+passwordEncoder -- when ever user credential pass in always encoded some form of encryption and to decript the password you need to do processing and here passwordEncoder help
+|>loadByUsername()
+userDetailsService -- load the user Details it will load the data to system what ever it has and from database 
+
+security context - it is context which availabe through out the request ,
