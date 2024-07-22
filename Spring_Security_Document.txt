@@ -24,3 +24,61 @@ passwordEncoder -- when ever user credential pass in always encoded some form of
 userDetailsService -- load the user Details it will load the data to system what ever it has and from database 
 
 security context - it is context which availabe through out the request ,
+
+you can configure customer username and password instead of using default / or copying automated generated password
+
+Basic VS Form base Authentication ===============
+---------------------------------------------------
+1.>Basic Authentication when you hit the endpoint you will see and popup in browser for login and there no url for login and logout
+   Form base Authentication when hit the endpoint first a login form will come and when you want to logout then you have to hit logout url 
+
+2.> In basic authentication if you want to logout if have to close the session 	/ JsessionId cookies will create and cookies will manage the session  and 
+      authorization header over here 
+   In Form base authentication you have the request and response cookies and also payload tab is also there 	  
+   
+-> As cookies maintain in basic authenication that is we can say it as statefull , and we can make it stateless
+ http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+				
+Base64 = username:password
+
+Role Based Access ------
+=================================
+@PreAuthorize("hasRole('USER')")- by annotating this you are telling to springsecurity i want only user to access paticular things 
+,used to check authorization before checking a method 
+to work this we need to go spring security configuration file and annotate @EnableMethodSecurity 
+
+noop - basically we use when we built demo applicaton - telling spring security that don't encrypt it save at is 
+
+What is Hashing ?
+Converting normal String to encrypted is called hashing 
+
+Algorithm - bcrypt - involves using salting  - normal string (password) +salt value = more encrypted value 
+
+
+WITHOUT JWT ----
+========================
+1 . No advance feature like no expiration time 
+2. can be decode easily 
+
+JWT --
+==============
+ Json Web Token , It is open and Industry Standard 
+ 
+ Works --
+ 1 . User tries to login 
+ 2.server will generate the token 
+ 3. token will issue to user
+ 4.token sent in API requests to server
+ 5. server will Validate token 
+ 6. Request authorized if valid , else error 
+
+How Token Sent ?
+Ans - Token sent using HTTP authorization header 
+format - Bearer<token> 
+
+3 color code - RED , Purple , blue 
+
+RED is Header , and header consist of type of token and signing algorithm used  (chart256 or RSA )
+Purple is payload , it is consist of claims and specifif information about user like userID and UserName and sort of metadata than can be added 
+Blue is signature , like a secret and appended eith entire token 
