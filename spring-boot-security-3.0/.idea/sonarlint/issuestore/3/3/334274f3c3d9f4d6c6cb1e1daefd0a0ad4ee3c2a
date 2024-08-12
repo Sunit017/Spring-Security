@@ -1,0 +1,11 @@
+
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+X
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ
+h
+java:S6204#"RReplace this usage of 'Stream.collect(Collectors.toList())' with 'Stream.toList()'(†öúš
+9
+java:S2119!"Save and re-use this "Random".(¥ŒÌøÿÿÿÿ
+9
+java:S2119""Save and re-use this "Random".(«éö™ûÿÿÿÿ
