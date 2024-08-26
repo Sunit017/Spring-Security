@@ -13,19 +13,36 @@ Security Fillter chain before that delegating fillter chain
 
 
 Fillter = before request go to controller and after response come from controller fillter stands in between 
+
 authentication fillter -- if you added spring security it will come and job is to intercept authenication request and grab username and password and create 
 authenication object /once object is created , object will hand over to authentication manager 
+
 authenication manager -- it decide what to do with this credential , delicate task authenicate to user to someone else and i need authentication provider
 |> authenticate()
+
 authentication provider (DaoauthenticationProvider)-- check that given credential right or wrong , it need 2 things 1.passwordEncoder 2.userDetailsService 
 |>matches
+
 passwordEncoder -- when ever user credential pass in always encoded some form of encryption and to decript the password you need to do processing and here passwordEncoder help
 |>loadByUsername()
-userDetailsService -- load the user Details it will load the data to system what ever it has and from database 
+
+userDetailsService -- load the user Details it will load the data to system what ever it has and from database // if don't want go with single user , go with multiple
+user 
 
 security context - it is context which availabe through out the request ,
 
 you can configure customer username and password instead of using default / or copying automated generated password
+
+-------------------
+In SpringBoot3 the WebSecurityConfigureAdaptor has been depricated which was provided us Authentication and Authrization by override constructor 
+Here we need to create bean of userDetailsService  to define the authenicated related stuff .
+And for authorization we have to create bean of springSecurityFillterChain
+
+
+
+
+
+
 
 Basic VS Form base Authentication ===============
 ---------------------------------------------------
@@ -60,7 +77,7 @@ WITHOUT JWT ----
 ========================
 1 . No advance feature like no expiration time 
 2. can be decode easily 
-
+3. should go for basic "Custom Token System" 
 JWT --
 ==============
  Json Web Token , It is open and Industry Standard 
@@ -79,6 +96,35 @@ format - Bearer<token>
 
 3 color code - RED , Purple , blue 
 
-RED is Header , and header consist of type of token and signing algorithm used  (chart256 or RSA )
+RED is Header , and header consist of type of token (JWT)and signing algorithm used  (chart256 or RSA )
 Purple is payload , it is consist of claims and specifif information about user like userID and UserName and sort of metadata than can be added 
 Blue is signature , like a secret and appended eith entire token 
+
+File Needed--
+=================
+1. JwtUtils - Contains Utility methods for generating , parsing and validating JWTs.
+             - Include generating token from username , validating a token and extracting username from it 
+
+2.AuthToKen Filter - If there is request come in it goes series of filter and you need to add your own custome filter over here ,to intercept the request 
+and do validation with JWTutils that we created , if request is valid we add authentication context as well 
+
+3. AuthEntryPoint JWT - It provide custome handling form unauthorized requests 
+
+4. Security Config - 	configure filter and rules of application  
+
+
+
+
+
+
+
+
+
+
+
+
+
+For OAuth2.0==========
+----------------------
+First we need to add Oauth2 Client Dependecies 
+for configuration we need clientid and client secret , configure in application.properties 
