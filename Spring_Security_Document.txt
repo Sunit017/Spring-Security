@@ -11,7 +11,6 @@ Spring Security ----
 ========================
 Security Fillter chain before that delegating fillter chain 
 
-
 Fillter = before request go to controller and after response come from controller fillter stands in between 
 
 authentication fillter -- if you added spring security it will come and job is to intercept authenication request and grab username and password and create 
@@ -34,14 +33,21 @@ security context - it is context which availabe through out the request ,
 you can configure customer username and password instead of using default / or copying automated generated password
 
 -------------------
-In SpringBoot3 the WebSecurityConfigureAdaptor has been depricated which was provided us Authentication and Authrization by override constructor 
+SPRING SECURITY 3.0	
+--------------------
+In SpringBoot3 the WebSecurityConfigureAdaptor has been depricated which was provided us Authentication and Authrization by override constructor
 Here we need to create bean of userDetailsService  to define the authenicated related stuff .
-And for authorization we have to create bean of springSecurityFillterChain
+And for authorization we have to create bean of springSecurityFillterChain // by using this we can permit and authenicate api endpoint 
+** Password Encoder - Encrypt the password / create bean of PasswordEncoder / before storing into db .
 
-
-
-
-
+Q- I don't want to hardcode this username and password , so what to do?
+ans - 1. first create the entity to store the username and password related stuff
+      2. create your own userdetailsservice and it implements userDetailsService
+      3. Override the method inside it , that is - loadUserByUsername and inject the repo 
+      4.create findByName method in repo and use it inside the loadUserByUsername method , but method wants return type is userdetails object 
+      5. need to convert the userinfo object into userdetails object for that need to create another userdetails class (userinfodetails extends userdetails) override 
+       all the method 
+     6. we need authentication provider who will talk with userDetailsService 	   
 
 
 Basic VS Form base Authentication ===============
@@ -59,7 +65,7 @@ Basic VS Form base Authentication ===============
 				
 Base64 = username:password
 
-Role Based Access ------
+ROLE BASED ACCESS ------
 =================================
 @PreAuthorize("hasRole('USER')")- by annotating this you are telling to springsecurity i want only user to access paticular things 
 ,used to check authorization before checking a method 
@@ -113,18 +119,25 @@ and do validation with JWTutils that we created , if request is valid we add aut
 4. Security Config - 	configure filter and rules of application  
 
 
-
-
-
-
-
-
-
-
-
-
-
 For OAuth2.0==========
 ----------------------
 First we need to add Oauth2 Client Dependecies 
 for configuration we need clientid and client secret , configure in application.properties 
+
+
+KEYCLOAK
+--------
+Terms 
+.Realm - isloate and manage 
+Client 
+Client scope - 
+users - 
+groups 
+
+Features - 
+ Signle sign on 
+ identity brokering and social login 
+ user federation 
+ admin console 
+ account management console 
+ 
