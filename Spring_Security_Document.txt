@@ -127,6 +127,40 @@ for configuration we need clientid and client secret , configure in application.
 
 KEYCLOAK
 --------
+
+1. Introduction: What is Keycloak? 
+Ans - ✅ Keycloak is an open-source Identity and Access Management (IAM) solution that provides authentication and authorization for applications.
+      ✅ It supports SSO (Single Sign-On), OAuth2, OpenID Connect (OIDC), and SAML
+
+2. Why Did You Choose Keycloak?
+Ans - ✅ Centralized Authentication: All authentication is handled by Keycloak, reducing security risks.
+      ✅ OAuth2 & OpenID Connect Support: Allows token-based authentication for secure API access.
+      ✅ Role-Based & Attribute-Based Access Control (RBAC & ABAC): Manages roles and permissions efficiently.
+      ✅ Session Management & SSO: Users log in once and access multiple applications.
+      ✅ Extensibility: Custom providers, authentication flows, and policies can be implemented.
+	 
+3. How Did You Integrate Keycloak with Spring Boot?
+Ans - Step 1: Added Keycloak Dependencies
+      In pom.xml, I included the Keycloak libraries:
+      Step 2: Configured Keycloak in application.yml
+      I specified the Keycloak server details and realm configurations: 
+	  Step 3: Configured Spring Security
+      I used OAuth2 resource server for JWT authentication:
+	  Step 4: Implemented Role-Based Access Control (RBAC)
+      Keycloak assigns roles to users, and Spring Security verifies them.
+      Fetching Roles from JWT in Spring Security:
+	  
+4. How Does Keycloak Handle Authentication & Authorization?
+Ans - ✅ Authentication:
+The frontend redirects the user to the Keycloak login page.
+After successful login, Keycloak generates a JWT token.
+The frontend stores the token and includes it in every API request.
+
+    ✅ Authorization:
+The backend extracts the JWT token from the request header.
+Spring Security validates the token and extracts roles & permissions.
+Based on roles, access is granted or denied
+	  
 Terms 
 .Realm - isloate and manage 
 Client 
@@ -141,3 +175,61 @@ Features -
  admin console 
  account management console 
  
+ 
+ 
+Q1- How do you implement role based access control in spring Security ?
+ Ans - By using Method level Security    - @PreAuthorize("hasRole('ADMIN')")
+                                         public void deleteUser(Long userId) { }
+      URL-Based Security in Configuration:   http
+    .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/admin/**").hasRole("ADMIN")
+        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+        .anyRequest().authenticated());
+
+Q3: How do you configure security in a Spring Boot application? 
+Ans - Spring Boot automatically configures security, but we override it using a SecurityFilterChain bean. 
+
+Q4: How does JWT authentication work in Spring Security?
+Ans - ✅ The server issues a JWT token after successful authentication.
+      ✅ The client includes this token in the Authorization header of subsequent requests.
+      ✅ The backend validates the token and extracts the user details.
+
+Q5: How did you integrate OAuth2 with Spring Security?
+Ans - Spring Security provides built-in OAuth2 support via spring-boot-starter-oauth2-client.
+      We configure OAuth2 authentication using OAuth2LoginConfigurer. 
+	  @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+        .oauth2Login(Customizer.withDefaults())  // Enables OAuth2 login
+        .logout(Customizer.withDefaults());
+    return http.build();
+}
+
+Q6: How do you configure session management in Spring Security?
+Ans - http.sessionManagement(session -> session
+    .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+      
+	  STATELESS: No session is created (useful for JWT authentication).
+      ALWAYS: Always creates a session.
+      NEVER: Uses session if exists but won’t create one.
+
+Q7: What is CSRF, and how does Spring Security handle it? 
+ ✅ Cross-Site Request Forgery (CSRF) is an attack where malicious requests are sent from an authenticated user’s session.
+ ✅ Spring Security enables CSRF protection by default.
+ 
+Q8: How do you handle authentication and authorization failures?
+Ans - Custom Authentication Failure Handler  
+      @Component
+    public class CustomAuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+    @Override
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
+            throws IOException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed");
+    }
+}
+
+Q9: How do you prevent brute-force attacks in Spring Security?
+ Ans - Use account lockout after multiple failed login attempts.
+       Implement rate-limiting on authentication APIs.
+       Use captcha after multiple failed attempts.
