@@ -106,6 +106,36 @@ RED is Header , and header consist of type of token (JWT)and signing algorithm u
 Purple is payload , it is consist of claims and specifif information about user like userID and UserName and sort of metadata than can be added 
 Blue is signature , like a secret and appended eith entire token 
 
+ FAQ
+ 
+How do you implement JWT refresh tokens in Spring Boot?
+✅ Store refresh tokens in the database or Redis.
+✅ When the access token expires, use the refresh token to get a new one
+
+How do you extract user roles from a JWT in Spring Boot?
+✅ Use Spring Security + JWT claims to extract roles.
+
+Implementing JWT Refresh Tokens in Spring Boot
+Step 1: Configure JWT & Refresh Token Expiration
+In application.properties, define expiration times:
+Access Token: Short-lived (15 min).
+Refresh Token: Long-lived (7 days).
+
+Step 2: Create JWT Utility Class
+Handles token generation, validation, and extraction of claims.
+✅ Generates & validates JWT tokens
+✅ Uses refresh tokens to issue new access tokens
+
+Step 3: Create Authentication Service
+Handles login, token refresh, and logout.
+✅ Stores refresh tokens in memory (use DB in production)
+✅ Generates new access tokens using refresh tokens
+✅ Handles logout by invalidating the refresh token
+
+ Step 4: Create Authentication Controller
+Handles login, token refresh, and logout API requests.
+✅ Exposes API endpoints for authentication & refresh token handling
+
 File Needed--
 =================
 1. JwtUtils - Contains Utility methods for generating , parsing and validating JWTs.
