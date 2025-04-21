@@ -1,11 +1,3 @@
- 
-Authentication --
-================
-Authentication means is knowing about the identity of user who is using the application .
-
-Authorization ---
-================
-it is next to authenication , giving authority to user use the specific components of application 
 
 Spring Security ----
 ========================
@@ -20,34 +12,10 @@ if the user is authenticated and authorized.
 5. Controller is accessed
 6. If invalid → returns 401 Unauthorized
 
-
-
-Security Fillter chain before that delegating fillter chain 
-
-Fillter = before request go to controller and after response come from controller fillter stands in between 
-
-authentication fillter -- if you added spring security it will come and job is to intercept authenication request and grab username and password and create 
-authenication object /once object is created , object will hand over to authentication manager 
-
-authenication manager -- it decide what to do with this credential , delicate task authenicate to user to someone else and i need authentication provider
-|> authenticate()
-
-authentication provider (DaoauthenticationProvider)-- check that given credential right or wrong , it need 2 things 1.passwordEncoder 2.userDetailsService 
-|>matches
-
-passwordEncoder -- when ever user credential pass in always encoded some form of encryption and to decript the password you need to do processing and here passwordEncoder help
-|>loadByUsername()
-
-userDetailsService -- load the user Details it will load the data to system what ever it has and from database // if don't want go with single user , go with multiple
-user 
-
-security context - it is context which availabe through out the request ,
-
-you can configure customer username and password instead of using default / or copying automated generated password
-
 -------------------
 SPRING SECURITY 3.0	
 --------------------
+
 In SpringBoot3 the WebSecurityConfigureAdaptor has been depricated which was provided us Authentication and Authrization by override constructor
 Here we need to create bean of userDetailsService  to define the authenicated related stuff .
 And for authorization we have to create bean of springSecurityFillterChain // by using this we can permit and authenicate api endpoint 
@@ -63,8 +31,8 @@ ans - 1. first create the entity to store the username and password related stuf
      6. we need authentication provider who will talk with userDetailsService 	   
 
 
-Basic VS Form base Authentication ===============
----------------------------------------------------
+BASIC VS FORM BASE AUTHENTICATION ==
+-------------------------------------
 1.>Basic Authentication when you hit the endpoint you will see and popup in browser for login and there no url for login and logout
    Form base Authentication when hit the endpoint first a login form will come and when you want to logout then you have to hit logout url 
 
@@ -75,28 +43,32 @@ Basic VS Form base Authentication ===============
 -> As cookies maintain in basic authenication that is we can say it as statefull , and we can make it stateless
  http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+FILE NEEDED 
+------------
+Security Fillter chain before that delegating fillter chain 
+Fillter = before request go to controller and after response come from controller fillter stands in between 
+AUTHENTICATION FILLTER -- if you added spring security it will come and job is to intercept authenication request and grab username and password and create 
+authenication object /once object is created , object will hand over to authentication manager 
+AUTHENICATION MANAGER -- it decide what to do with this credential , delicate task authenicate to user to someone else and i need authentication provider
+|> authenticate()
+AUTHENTICATION PROVIDER (DAOAUTHENTICATIONPROVIDER)-- check that given credential right or wrong , it need 2 things 1.passwordEncoder 2.userDetailsService 
+|>matches
+PASSWORDENCODER -- when ever user credential pass in always encoded some form of encryption and to decript the password you need to do processing and here passwordEncoder help
+|>loadByUsername()
+USERDETAILSSERVICE -- load the user Details it will load the data to system what ever it has and from database // if don't want go with single user , go with multiple
+user 
+SECURITY CONTEXT - it is context which availabe through out the request ,
+you can configure customer username and password instead of using default / or copying automated generated password
 				
-Base64 = username:password
-
-ROLE BASED ACCESS ------
-=================================
-@PreAuthorize("hasRole('USER')")- by annotating this you are telling to springsecurity i want only user to access paticular things 
-,used to check authorization before checking a method 
-to work this we need to go spring security configuration file and annotate @EnableMethodSecurity 
-
-noop - basically we use when we built demo applicaton - telling spring security that don't encrypt it save at is 
-
-What is Hashing ?
-Converting normal String to encrypted is called hashing 
-
-Algorithm - bcrypt - involves using salting  - normal string (password) +salt value = more encrypted value 
-
 
 WITHOUT JWT ----
-========================
+=================
 1 . No advance feature like no expiration time 
 2. can be decode easily 
 3. should go for basic "Custom Token System" 
+
+
 JWT --
 ==============
   JWT (JSON Web Token) is commonly used for stateless authentication.
@@ -131,6 +103,58 @@ and do validation with JWTutils that we created , if request is valid we add aut
 3. AuthEntryPoint JWT - It provide custome handling form unauthorized requests 
 
 4. Security Config - 	configure filter and rules of application  
+
+ROLE BASED ACCESS ------
+==========================
+@PreAuthorize("hasRole('USER')")- by annotating this you are telling to springsecurity i want only user to access paticular things 
+,used to check authorization before checking a method 
+to work this we need to go spring security configuration file and annotate @EnableMethodSecurity 
+noop - basically we use when we built demo applicaton - telling spring security that don't encrypt it save at is 
+What is Hashing ?
+Converting normal String to encrypted is called hashing 
+Algorithm - bcrypt - involves using salting  - normal string (password) +salt value = more encrypted value 
+
+🔐 HOW DO YOU CREATE A JWT IN SPRING BOOT?
+✅ You need:
+A secret key 🔑
+Claims (like username, roles, etc.)
+Expiration time 🕒
+A JWT library like jjwt (io.jsonwebtoken):
+
+WHERE DO YOU STORE YOUR JWT TOKEN?
+Ans - We usually store JWT tokens on the client side. For development or simple apps, we use localStorage, but for production environments,
+we prefer secure HTTP-only cookies to prevent XSS attacks. On the server side, we validate the token using our secret key without storing 
+it — keeping the system stateless.For logout or revocation scenarios, we can use Redis or a DB to blacklist tokens.
+
+
+HOW DO YOU IMPLEMENT JWT REFRESH TOKENS IN SPRING BOOT?
+✅ Store refresh tokens in the database or Redis.
+✅ When the access token expires, use the refresh token to get a new one
+
+HOW DO YOU EXTRACT USER ROLES FROM A JWT IN SPRING BOOT?
+✅ Use Spring Security + JWT claims to extract roles.
+Implementing JWT Refresh Tokens in Spring Boot
+Step 1: Configure JWT & Refresh Token Expiration
+In application.properties, define expiration times:
+Access Token: Short-lived (15 min).
+Refresh Token: Long-lived (7 days).
+
+Step 2: Create JWT Utility Class
+Handles token generation, validation, and extraction of claims.
+✅ Generates & validates JWT tokens
+✅ Uses refresh tokens to issue new access tokens
+
+Step 3: Create Authentication Service
+Handles login, token refresh, and logout.
+✅ Stores refresh tokens in memory (use DB in production)
+✅ Generates new access tokens using refresh tokens
+✅ Handles logout by invalidating the refresh token
+
+ Step 4: Create Authentication Controller
+Handles login, token refresh, and logout API requests.
+✅ Exposes API endpoints for authentication & refresh token handling
+
+
 
 
 For OAuth2.0==========
