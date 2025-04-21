@@ -1,4 +1,4 @@
-
+ 
 Authentication --
 ================
 Authentication means is knowing about the identity of user who is using the application .
@@ -9,6 +9,19 @@ it is next to authenication , giving authority to user use the specific componen
 
 Spring Security ----
 ========================
+Spring Security is a powerful authentication and authorization framework for Java applications. It intercepts requests before they reach your controller and checks 
+if the user is authenticated and authorized.
+
+🔹 How It Works (High-Level Flow):
+1. Incoming HTTP request
+2. Passes through Security Filter Chain
+3. Filters like UsernamePasswordAuthenticationFilter or JwtAuthenticationFilter validate the request
+4. If valid → creates a SecurityContext (stores user info)
+5. Controller is accessed
+6. If invalid → returns 401 Unauthorized
+
+
+
 Security Fillter chain before that delegating fillter chain 
 
 Fillter = before request go to controller and after response come from controller fillter stands in between 
@@ -86,7 +99,8 @@ WITHOUT JWT ----
 3. should go for basic "Custom Token System" 
 JWT --
 ==============
- Json Web Token , It is open and Industry Standard 
+  JWT (JSON Web Token) is commonly used for stateless authentication.
+  Json Web Token , It is open and Industry Standard 
  
  Works --
  1 . User tries to login 
