@@ -104,6 +104,88 @@ and do validation with JWTutils that we created , if request is valid we add aut
 
 4. Security Config - 	configure filter and rules of application  
 
+
+🔐 AUTH SERVICE FLOW: FROM REGISTER/LOGIN TO TOKEN VALIDATION
+
+✅ 1. ENTITY LAYER (E.G. USER, ROLE)
+These are JPA entity classes representing your DB tables.
+
+🧾 User.java
+Represents a user with fields like username, password, roles, etc.
+Stores hashed password using BCryptPasswordEncoder.
+Annotated with @Entity, it maps to a DB table.
+
+🧾 Role.java
+Represents different user roles like ROLE_USER, ROLE_ADMIN
+
+✅ 2. REPOSITORY LAYER
+These interfaces connect with the database.
+📦 UserRepository
+findByEmail() or findByUsername() to fetch a user for login.
+Optional<User> findByEmail(String email);
+
+✅ 3. DTO LAYER
+Used to transfer data between client and server.
+RegisterRequest: contains name, email, password.
+LoginRequest: contains email and password.
+AuthResponse: returns token and user details.
+
+✅ 4. SERVICE LAYER
+Handles core business logic.
+📌 AuthService
+register():
+Takes RegisterRequest, checks if user exists.
+Hashes password using BCryptPasswordEncoder.
+Saves user and returns token using JwtService.
+authenticate():
+Verifies credentials.
+Loads user via UserDetailsService.
+If correct, generates a token via JwtService
+
+✅ 5. SECURITY CONFIGURATION
+🔒 SecurityConfig.java
+Tells Spring Security:
+Which endpoints are public (e.g., /auth/register, /auth/login).
+Applies authentication filter to all other endpoints.
+Configures password encoder.
+Uses custom JWT filter to validate tokens
+
+6. JWT UTILITY
+🧠 JwtService
+This class is the heart of JWT handling.
+generateToken(UserDetails user):
+ .Uses io.jsonwebtoken library.
+ .Sets claims, expiration time.
+ .Signs with a secret key.
+extractUsername(token):
+ .Extracts the username/email from the JWT.
+isTokenValid(token, user):
+ .Checks if token is not expired and belongs to the correct user.
+
+ 7. FILTER LAYER
+
+📥 JwtAuthFilter
+Custom filter that intercepts each request before hitting your controllers:
+Extracts JWT token from the Authorization header.
+Validates it using JwtService.
+If valid, sets authentication in the SecurityContext.
+
+✅ 8. AUTHENTICATION MANAGER
+Used in login to authenticate the user's credentials
+This checks against the DB (via UserDetailsService).
+
+✅ 9. CONTROLLER LAYER
+📲 AuthController
+Handles HTTP requests for:
+/register → register()
+/login → authenticate()
+/refresh-token → if implemented.
+Returns JWT on success.
+
+“The JwtService is the heart of JWT-based authentication in our microservices app. It handles generating tokens on login, extracting user info from tokens,
+ and validating tokens for protected routes. This ensures that only authorized users can access secure parts of the system
+ — all without needing to check the database every time.
+
 ROLE BASED ACCESS ------
 ==========================
 @PreAuthorize("hasRole('USER')")- by annotating this you are telling to springsecurity i want only user to access paticular things 
